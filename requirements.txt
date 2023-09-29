@@ -1,0 +1,4 @@
+click
+glog
+prometheus-client
+rivian-python-client>=0.2.4
