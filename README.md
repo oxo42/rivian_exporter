@@ -4,41 +4,46 @@ This is a prometheus_exporter that is scrapes data from the Rivian GraphAPI than
 
 It is designed to be run as a docker image for the exporter daemon.  There are also CLI sub-commands to authenticate and fetch information about vehicles.  The intended flow is something like
 
+## How to run
 
-```shell
-$ docker run -it rivian_exporter login
-```
-```text
-Username: me@example.com
-Password: hunter2
-Logging in with password
-OTP Required
-OTP: 12345
-Validating OTP
-ACCESS_TOKEN="SECRET"
-REFRESH_TOKEN="ASO_SECRET"
-USER_SESSION_TOKEN="OMG_ANOTHER_SECRET"
+### Build
+
+```shell 
+docker build -t rivian_exporter .
 ```
 
-The other sub-commands expect those tokens to be part of the environment
+### Login and save credentials
+
 ```shell
-docker run \
-    -e ACCESS_TOKEN="SECRET" \
-    -e REFRESH_TOKEN="ASO_SECRET" \
-    -e USER_SESSION_TOKEN="OMG_ANOTHER_SECRET" \
-    -it rivian_exporter list-vehicles
-```
-```plain
-RIVIAN R1S: TheVin
-RIVIAN R1T (TruckName): TheVin2
+docker run -it rivian_exporter login
 ```
 
-Then for the final step, run the exporter
+Save the last 3 lines to `/tmp/rivian-creds`
+
+### Get user info
+
 ```shell
-docker run \
-    -e ACCESS_TOKEN="SECRET" \
-    -e REFRESH_TOKEN="ASO_SECRET" \
-    -e USER_SESSION_TOKEN="OMG_ANOTHER_SECRET" \
-    -e VIN="TheVin" \
-    -it rivian_exporter prometheus
+docker run --env-file /tmp/rivian-creds -it rivian user-info 
+# add `| jq` to prettify it
 ```
+
+#### Dump vehicle info
+This calls the same function the prometheus exporter calls
+```shell
+docker run --env-file /tmp/rivian-creds -it rivian_exporter vehicle-state 7PDSGABA6PN022901 | jq
+```
+
+### Run the exporter for the final step, run the exporter
+```shell
+docker run -p 8000 --env-file /tmp/rivian-creds -e VIN="TheVin" rivian_exporter prometheus
+curl http://localhost:8000
+```
+
+FWIW I put all the parameters as environment variables so they can easily be
+injected into the container from whatever secrets tool you use (docker-compose,
+kubernetes, etc)
+
+
+## TODO
+* Setup CI for docker and publish
+* Add metrics into the collector

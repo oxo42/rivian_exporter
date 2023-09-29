@@ -13,7 +13,12 @@ def ensure_auth() -> None:
 
     Throws if any issues
     """
-    pass
+    if not os.getenv("ACCESS_TOKEN"):
+        raise Exception("ACCESS_TOKEN is not set")
+    if not os.getenv("REFRESH_TOKEN"):
+        raise Exception("REFRESH_TOKEN is not set")
+    if not os.getenv("USER_SESSION_TOKEN"):
+        raise Exception("USER_SESSION_TOKEN is not set")
 
 
 async def login() -> Tuple[str, str, str]:
