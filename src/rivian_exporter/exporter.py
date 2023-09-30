@@ -8,17 +8,34 @@ import prometheus_client as prom
 from . import vehicle
 
 RIVIAN_GAUGES = {
-    "batteryCapacity": prom.Gauge("battery_capacity", "battery capacity in kwH"),
-    "batteryLevel": prom.Gauge("battery_level", "current level of battery as a %"),
-    "cabinClimateInteriorTemperature": prom.Gauge(
-        "cabin_climate_interior_temperature", "Current temperature in the cabin in C"
+    "batteryCapacity": prom.Gauge(
+        "rivian_battery_capacity_kwh", "battery capacity in kwH"
     ),
-    "distanceToEmpty": prom.Gauge("distance_to_empty", "range in km"),
-    "vehicleMileage": prom.Gauge("vehicle_mileage", "current odo reading in m"),
+    "batteryLevel": prom.Gauge(
+        "rivian_battery_level_ratio", "current level of battery as a %"
+    ),
+    "batteryLimit": prom.Gauge(
+        "rivian_battery_limit_ratio", "Limit to which the battery will charge"
+    ),
+    "cabinClimateInteriorTemperature": prom.Gauge(
+        "rivian_cabin_climate_interior_temperature_celsius",
+        "Current temperature in the cabin in C",
+    ),
+    "distanceToEmpty": prom.Gauge("rivian_distance_to_empty_meters", "range"),
+    "vehicleMileage": prom.Gauge(
+        "rivian_vehicle_mileage_meters", "current odo reading in meters"
+    ),
+    "gnssBearing": prom.Gauge("rivian_bearing_degrees", "Bearing of th vehicle"),
+    "gnssSpeed": prom.Gauge("rivian_speed_kph", "speed"),
 }
 RIVIAN_INFOS = {
-    "otaCurrentVersion": prom.Info("ota_current_version", "Current OTA Version"),
+    "otaCurrentVersion": prom.Info(
+        "rivian_ota_current_version_info", "Current OTA Version"
+    ),
 }
+
+LATITUDE = prom.Gauge("rivian_latitude_degrees", "Latitude")
+LONGITUDE = prom.Gauge("rivian_longitude_degrees", "Longitude")
 
 
 def set_prom_metrics(data: Any) -> None:
@@ -32,13 +49,13 @@ def set_prom_metrics(data: Any) -> None:
         info.info({key: value})
         log.info(f"Info {key} to {value}")
 
+    LATITUDE.set(state["gnssLocation"]["latitude"])
+    LONGITUDE.set(state["gnssLocation"]["longitude"])
+
 
 def run(port: int, scrape_interval: int, vin: str) -> None:
-    # Start up the server to expose the metrics.
-    loop = asyncio.new_event_loop()
     log.info(f"Starting prometheus server on port {port}")
     prom.start_http_server(port)
-    # Generate some requests.
     while True:
         state = asyncio.run(vehicle.get_vehicle_state(vin))
         set_prom_metrics(state)
