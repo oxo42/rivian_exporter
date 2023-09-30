@@ -42,7 +42,7 @@ def user_info():
 @click.argument("vin")
 def vehicle_state(vin: str) -> None:
     state = asyncio.run(vehicle.get_vehicle_state(vin))
-    print(state)
+    print(json.dumps(state))
 
 
 if __name__ == "__main__":
