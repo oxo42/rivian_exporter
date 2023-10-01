@@ -1,9 +1,5 @@
-import asyncio
-import dataclasses
-import time
 from typing import Any, Callable, Type, TypeVar
 
-import glog as log
 import prometheus_client as prom
 
 from . import vehicle
