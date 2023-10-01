@@ -26,7 +26,12 @@ COLLECTORS = [
         "Current temperature in the cabin in C",
         "cabinClimateInteriorTemperature",
     ),
-    gauge("rivian_distance_to_empty_meters", "range", "distanceToEmpty"),
+    gauge(
+        "rivian_distance_to_empty_meters",
+        "range",
+        "distanceToEmpty",
+        modifier=lambda v: v * 1000,
+    ),
     gauge(
         "rivian_vehicle_mileage_meters",
         "current odo reading in meters",
