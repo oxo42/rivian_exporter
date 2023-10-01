@@ -1,5 +1,6 @@
 from typing import Any, Callable, Type, TypeVar
 
+import glog as log
 import prometheus_client as prom
 
 from . import vehicle
@@ -50,11 +51,16 @@ class RivianCollector:
 
         self.prom_metric = metric_type(prometheus_label, prometheus_description)
 
-    def process(self, vehicle_state: dict[str, Any]) -> None:
+    def value(self, vehicle_state: dict[str, Any]) -> TCollectorMetric:
         datum = vehicle_state[self.rivian_label]
         value = self.getter(datum)
         collector_value = self.modifier(value)
-        self.metric_setter(self.prom_metric, collector_value)
+        return collector_value
+
+    def process(self, vehicle_state: dict[str, Any]) -> None:
+        value = self.value(vehicle_state)
+        log.info(f"Setting {self.prometheus_label} to {value}")
+        self.metric_setter(self.prom_metric, self.value(vehicle_state))
 
 
 def gauge(
