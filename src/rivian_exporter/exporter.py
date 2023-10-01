@@ -1,6 +1,7 @@
 import asyncio
+import dataclasses
 import time
-from typing import Any
+from typing import Any, Callable
 
 import glog as log
 import prometheus_client as prom

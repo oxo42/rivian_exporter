@@ -3,20 +3,12 @@ import os
 
 import pytest
 import rivian
-from .pytest_testslide import testslide
 from testslide import StrictMock
 
 from rivian_exporter import vehicle
 
-
-def get_rivian_mock(testslide):
-    rivian_mock = StrictMock(rivian.Rivian)
-    testslide.mock_async_callable(rivian_mock, "__aenter__").to_return_value(
-        rivian_mock
-    )
-    testslide.mock_async_callable(rivian_mock, "__aexit__").to_return_value(None)
-    testslide.mock_async_callable(rivian_mock, "authenticate").to_return_value(None)
-    return rivian_mock
+from . import utils
+from .pytest_testslide import testslide
 
 
 def test_ensure_auth():
@@ -27,7 +19,7 @@ def test_ensure_auth():
 
 
 async def test_login_without_otp(testslide, monkeypatch):
-    rivian_mock = get_rivian_mock(testslide)
+    rivian_mock = utils.get_rivian_mock(testslide)
     testslide.mock_async_callable(rivian_mock, "validate_otp").to_return_value(
         None
     ).and_assert_not_called()
