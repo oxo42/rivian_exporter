@@ -4,7 +4,8 @@ This is a prometheus_exporter that is scrapes data from the Rivian GraphAPI than
 
 It is designed to be run as a docker image for the exporter daemon.  There are also CLI sub-commands to authenticate and fetch information about vehicles.  The intended flow is something like
 
-![grafana-rivian-dash](https://github.com/oxo42/rivian_exporter/assets/572079/d235296f-ab2b-4187-a0f5-c81cb5c077fe)
+![image](https://github.com/oxo42/rivian_exporter/assets/572079/2361ebc7-288d-4fb1-98ed-c5d8d00a3229)
+
 
 ## How to run
 
