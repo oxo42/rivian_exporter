@@ -20,6 +20,7 @@ COLLECTORS = [
         "rivian_battery_limit_ratio",
         "Limit to which the battery will charge",
         "batteryLimit",
+        modifier=lambda v: v / 100,
     ),
     gauge(
         "rivian_cabin_climate_interior_temperature_celsius",
@@ -74,6 +75,12 @@ def run(port: int, scrape_interval: int, vin: str) -> None:
     log.info(f"Starting prometheus server on port {port}")
     prom.start_http_server(port)
     while True:
-        state = asyncio.run(vehicle.get_vehicle_state(vin))
-        set_prom_metrics(state)
-        time.sleep(scrape_interval)
+        try:
+            state = asyncio.run(vehicle.get_vehicle_state(vin))
+            set_prom_metrics(state)
+            time.sleep(scrape_interval)
+        except Exception as e:
+            log.exception(str(e))
+            exception_backoff = 60
+            log.info(f"Sleeping {exception_backoff} seconds")
+            time.sleep(exception_backoff)
