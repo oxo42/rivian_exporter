@@ -33,7 +33,7 @@ docker run --env-file /tmp/rivian-creds -it rivian user-info
 #### Dump vehicle info
 This calls the same function the prometheus exporter calls
 ```shell
-docker run --env-file /tmp/rivian-creds -it rivian_exporter vehicle-state 7PDSGABA6PN022901 | jq
+docker run --env-file /tmp/rivian-creds -it rivian_exporter vehicle-state 'TheVin' | jq
 ```
 
 ### Run the exporter for the final step, run the exporter
