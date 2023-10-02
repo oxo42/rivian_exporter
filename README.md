@@ -50,3 +50,8 @@ kubernetes, etc)
 ## TODO
 * Setup CI for docker and publish
 * Add metrics into the collector
+* Build a class that holds the Rivian object and reuses it for querying the API
+  * I am assuming this will use the websocket and I can then change the scrape interval much lower
+* Split `RivianCollector` into `RivianGauge` and `RivianInfo`
+  * The `Info` collector needs to take things from multiple fields, e.g. version having `otaCurrentVersion` and `otaCurrentVersionGitHash`.  This is a prometheus thing that I want to lean into
+
