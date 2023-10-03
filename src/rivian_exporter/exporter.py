@@ -22,6 +22,12 @@ COLLECTORS = [
         "batteryLimit",
         modifier=lambda v: v / 100,
     ),
+    gauge("rivian_bearing_degrees", "Bearing of the vehicle", "gnssBearing"),
+    gauge(
+        "rivian_cabin_climate_driver_temperature_celsius",
+        "Desired temperature for the driver",
+        "cabinClimateInteriorTemperature",
+    ),
     gauge(
         "rivian_cabin_climate_interior_temperature_celsius",
         "Current temperature in the cabin in C",
@@ -34,13 +40,6 @@ COLLECTORS = [
         modifier=lambda v: v * 1000,
     ),
     gauge(
-        "rivian_vehicle_mileage_meters",
-        "current odo reading in meters",
-        "vehicleMileage",
-    ),
-    gauge("rivian_bearing_degrees", "Bearing of the vehicle", "gnssBearing"),
-    gauge("rivian_speed_kph", "speed", "gnssSpeed"),
-    gauge(
         "rivian_latitude_degrees",
         "Latitude",
         "gnssLocation",
@@ -51,6 +50,17 @@ COLLECTORS = [
         "Longitude",
         "gnssLocation",
         getter=lambda v: v["longitude"],
+    ),
+    gauge("rivian_speed_kph", "speed", "gnssSpeed"),
+    gauge(
+        "rivian_time_to_end_of_charge_seconds",
+        "Time to end of charge",
+        "timeToEndOfCharge",
+    ),
+    gauge(
+        "rivian_vehicle_mileage_meters",
+        "current odo reading in meters",
+        "vehicleMileage",
     ),
 ]
 RIVIAN_INFOS = {
