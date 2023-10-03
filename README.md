@@ -30,21 +30,28 @@ docker run --env-file /tmp/rivian-creds -it rivian user-info
 # add `| jq` to prettify it
 ```
 
+Then add `VIN=<YourVin>` to the credentials file
+
 #### Dump vehicle info
 This calls the same function the prometheus exporter calls
 ```shell
-docker run --env-file /tmp/rivian-creds -it rivian_exporter vehicle-state 'TheVin' | jq
+docker run --env-file /tmp/rivian-creds -it rivian_exporter vehicle-state | jq
 ```
 
 ### Run the exporter for the final step, run the exporter
 ```shell
-docker run -p 8000 --env-file /tmp/rivian-creds -e VIN="TheVin" rivian_exporter prometheus
+docker run -p 8000 --env-file /tmp/rivian-creds rivian_exporter prometheus
 curl http://localhost:8000
 ```
 
-FWIW I put all the parameters as environment variables so they can easily be
-injected into the container from whatever secrets tool you use (docker-compose,
-kubernetes, etc)
+
+### Using Docker Secrets
+Instead of having all the tokens and VIN as environment variables, you can store each one in a file then use docker secrets to populate those files.  You need to specificy the environment variables
+* `ACCESS_TOKEN_FILE` => `/run/secrets/access_token`
+* `REFRESH_TOKEN_FILE` => `/run/secrets/refresh_token`
+* `USER_SESSION_TOKEN_FILE` => `/run/secrets/user_session_token`
+* `VIN_FILE` => `/run/secrets/vin`
+
 
 
 ## TODO
@@ -54,4 +61,3 @@ kubernetes, etc)
   * I am assuming this will use the websocket and I can then change the scrape interval much lower
 * Split `RivianCollector` into `RivianGauge` and `RivianInfo`
   * The `Info` collector needs to take things from multiple fields, e.g. version having `otaCurrentVersion` and `otaCurrentVersionGitHash`.  This is a prometheus thing that I want to lean into
-
