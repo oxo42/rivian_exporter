@@ -1,11 +1,14 @@
 # rivian_exporter
 
+WARNING: This is still a work in progress.  Come fine me on the Rivian Discord if you have issues.
+
 This is a prometheus_exporter that is scrapes data from the Rivian GraphAPI thanks to the [rivian-python-client](https://github.com/bretterer/rivian-python-client).
 
 It is designed to be run as a docker image for the exporter daemon.  There are also CLI sub-commands to authenticate and fetch information about vehicles.  The intended flow is something like
 
 ![image](https://github.com/oxo42/rivian_exporter/assets/572079/2361ebc7-288d-4fb1-98ed-c5d8d00a3229)
 
+You can get [my dashboard from Grafana](https://grafana.com/grafana/dashboards/19692-rivian/).  Warning, I'm odd and use miles for distance and celsius for temperature.  If you build your own dash, pull request to link it here.
 
 ## How to run
 
@@ -26,7 +29,7 @@ Save the last 3 lines to `/tmp/rivian-creds`
 ### Get user info
 
 ```shell
-docker run --env-file /tmp/rivian-creds -it rivian user-info 
+docker run --env-file /tmp/rivian-creds -it rivian_exporter user-info 
 # add `| jq` to prettify it
 ```
 
