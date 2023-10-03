@@ -5,18 +5,12 @@ import glog as log
 import rivian
 
 
-def ensure_auth() -> None:
-    """
-    Ensure ACCESS_TOKEN, REFRESH_TOKEN and USER_SESSION_TOKEN are in the environment and nonnull
+class RivianExporterException(Exception):
+    """Base exception"""
 
-    Throws if any issues
-    """
-    if not os.getenv("ACCESS_TOKEN"):
-        raise Exception("ACCESS_TOKEN is not set")
-    if not os.getenv("REFRESH_TOKEN"):
-        raise Exception("REFRESH_TOKEN is not set")
-    if not os.getenv("USER_SESSION_TOKEN"):
-        raise Exception("USER_SESSION_TOKEN is not set")
+
+class TokenUnavailableException(RivianExporterException):
+    """Cannot read the token from the environment or the file"""
 
 
 async def login() -> Tuple[str, str, str]:
@@ -27,16 +21,34 @@ async def login() -> Tuple[str, str, str]:
         await r.authenticate(username, password)
         if r._otp_needed:
             log.info("OTP Required")
-            otp_code = input()
+            otp_code = input("OTP: ")
             await r.validate_otp(username, otp_code)
         return (r._access_token, r._refresh_token, r._user_session_token)
 
 
+def get_token(token: str) -> str:
+    """
+    This will get a token (or the VIN) either directly from an environment
+    variable `token` or from the file specified in the environment variable
+    `{token}_FILE`
+    """
+    env = os.getenv(token)
+    if env:
+        return env
+
+    filename = os.getenv(f"{token}_FILE")
+    if not os.path.isfile(filename):
+        raise TokenUnavailableException(token)
+
+    with open(filename) as f:
+        line = f.readline()
+        return line.strip()
+
+
 def get_rivian() -> rivian.Rivian:
-    ensure_auth()
-    access_token = os.getenv("ACCESS_TOKEN")
-    refresh_token = os.getenv("REFRESH_TOKEN")
-    user_session_token = os.getenv("USER_SESSION_TOKEN")
+    access_token = get_token("ACCESS_TOKEN")
+    refresh_token = get_token("REFRESH_TOKEN")
+    user_session_token = get_token("USER_SESSION_TOKEN")
     return rivian.Rivian(
         access_token=access_token,
         refresh_token=refresh_token,

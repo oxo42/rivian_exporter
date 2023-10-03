@@ -20,7 +20,7 @@ def cli() -> None:
 @click.option("--scrape-interval", default=60)
 def prometheus(port: int, scrape_interval: int) -> None:
     vehicle.ensure_auth()
-    vin = os.environ["VIN"]
+    vin = vehicle.get_token("VIN")
     exporter.run(port, scrape_interval, vin)
 
 
@@ -39,8 +39,8 @@ def user_info():
 
 
 @cli.command()
-@click.argument("vin")
-def vehicle_state(vin: str) -> None:
+def vehicle_state() -> None:
+    vin = vehicle.get_token("VIN")
     state = asyncio.run(vehicle.get_vehicle_state(vin))
     print(json.dumps(state))
 
