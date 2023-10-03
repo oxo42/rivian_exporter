@@ -19,7 +19,6 @@ def cli() -> None:
 @click.option("--port", default=8000)
 @click.option("--scrape-interval", default=60)
 def prometheus(port: int, scrape_interval: int) -> None:
-    vehicle.ensure_auth()
     vin = vehicle.get_token("VIN")
     exporter.run(port, scrape_interval, vin)
 
