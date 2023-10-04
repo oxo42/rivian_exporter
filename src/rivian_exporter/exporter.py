@@ -1,5 +1,6 @@
 import asyncio
 import time
+import rivian
 from typing import Any
 
 import glog as log
@@ -78,19 +79,43 @@ def set_prom_metrics(data: Any) -> None:
     for key, info in RIVIAN_INFOS.items():
         value = state[key]["value"]
         info.info({key: value})
-        log.info(f"Info {key} to {value}")
+        log.debug(f"Info {key} to {value}")
+
+    count = len(COLLECTORS) + len(RIVIAN_INFOS)
+    log.info(f"Set {count} metrics")
+
+
+class RivianExporter:
+    vin: str
+    scrape_interval: int
+    rivian: rivian.Rivian
+
+    def __init__(self, vin: str, scrape_interval: int) -> None:
+        self.vin = vin
+        self.rivian = vehicle.get_rivian()
+        self.scrape_interval = scrape_interval
+
+    async def get_vehicle_state(self) -> Any:
+        state = await self.rivian.get_vehicle_state(self.vin)
+        body = await state.json()
+        return body
+
+    async def run(self):
+        await self.rivian.create_csrf_token()
+        while True:
+            try:
+                state = await self.get_vehicle_state()
+                set_prom_metrics(state)
+                time.sleep(self.scrape_interval)
+            except Exception as e:
+                log.exception(str(e))
+                exception_backoff = 60
+                log.info(f"Sleeping {exception_backoff} seconds")
+                time.sleep(exception_backoff)
 
 
 def run(port: int, scrape_interval: int, vin: str) -> None:
     log.info(f"Starting prometheus server on port {port}")
     prom.start_http_server(port)
-    while True:
-        try:
-            state = asyncio.run(vehicle.get_vehicle_state(vin))
-            set_prom_metrics(state)
-            time.sleep(scrape_interval)
-        except Exception as e:
-            log.exception(str(e))
-            exception_backoff = 60
-            log.info(f"Sleeping {exception_backoff} seconds")
-            time.sleep(exception_backoff)
+    exporter = RivianExporter(vin, scrape_interval)
+    asyncio.run(exporter.run())
