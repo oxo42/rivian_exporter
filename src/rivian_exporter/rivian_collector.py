@@ -59,7 +59,7 @@ class RivianCollector:
 
     def process(self, vehicle_state: dict[str, Any]) -> None:
         value = self.value(vehicle_state)
-        log.info(f"Setting {self.prometheus_label} to {value}")
+        log.debug(f"Setting {self.prometheus_label} to {value}")
         self.metric_setter(self.prom_metric, self.value(vehicle_state))
 
 
