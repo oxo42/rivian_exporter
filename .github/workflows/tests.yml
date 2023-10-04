@@ -29,4 +29,6 @@ jobs:
       - name: Coverage
         run: |
           poetry run coverage run -m pytest
-          poetry run coverage -m
+          poetry run coverage report -m
+      - name: Flake8
+        run: poetry run flake8
