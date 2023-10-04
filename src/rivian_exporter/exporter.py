@@ -73,7 +73,7 @@ COLLECTORS = [
 ]
 RIVIAN_INFOS = {
     "otaCurrentVersion": prom.Info(
-        "rivian_ota_current_version_info", "Current OTA Version"
+        "rivian_ota_current_version", "Current OTA Version"
     ),
 }
 
