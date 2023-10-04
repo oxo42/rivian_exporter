@@ -3,13 +3,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# imported from https://github.com/facebook/TestSlide/blob/main/pytest-testslide/pytest_testslide.py due to version incompatabilities
+# imported from
+# https://github.com/facebook/TestSlide/blob/main/pytest-testslide/pytest_testslide.py
+# due to version incompatabilities
 
 from types import TracebackType
 from typing import Any, Callable, Iterator, List, Optional
 
 import pytest
-
 import testslide as testslide_module
 
 

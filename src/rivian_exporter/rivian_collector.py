@@ -3,8 +3,6 @@ from typing import Any, Callable, Type, TypeVar
 import glog as log
 import prometheus_client as prom
 
-from . import vehicle
-
 # prom.Gauge / prom.Info
 TCollector = TypeVar("TCollector")
 # The metric the prometheus collector takes

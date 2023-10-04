@@ -1,11 +1,9 @@
 import asyncio
-import time
-import rivian
 from typing import Any
 
 import glog as log
 import prometheus_client as prom
-
+from rivian import Rivian
 from rivian.exceptions import (
     RivianApiException,
     RivianApiRateLimitError,
@@ -14,7 +12,7 @@ from rivian.exceptions import (
 )
 
 from . import vehicle
-from .rivian_collector import gauge, info
+from .rivian_collector import gauge
 
 COLLECTORS = [
     gauge("rivian_battery_capacity_kwh", "battery capacity in kwH", "batteryCapacity"),
@@ -72,9 +70,7 @@ COLLECTORS = [
     ),
 ]
 RIVIAN_INFOS = {
-    "otaCurrentVersion": prom.Info(
-        "rivian_ota_current_version", "Current OTA Version"
-    ),
+    "otaCurrentVersion": prom.Info("rivian_ota_current_version", "Current OTA Version"),
 }
 
 
@@ -95,7 +91,7 @@ def set_prom_metrics(data: Any) -> None:
 class RivianExporter:
     vin: str
     scrape_interval: int
-    rivian: rivian.Rivian
+    rivian: Rivian
 
     def __init__(self, vin: str, scrape_interval: int) -> None:
         self.vin = vin
@@ -121,7 +117,7 @@ class RivianExporter:
                 log.error("Rate limit being enforced: %s", err, exc_info=1)
                 log.info("Sleeping 900 seconds")
                 await asyncio.sleep(900)
-            except RivianUnauthenticated as err:
+            except RivianUnauthenticated:
                 raise
             except RivianApiException as ex:
                 log.error("Rivian api exception: %s", ex, exc_info=1)

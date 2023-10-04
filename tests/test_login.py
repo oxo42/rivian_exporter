@@ -1,10 +1,10 @@
-import io
 import builtins
+import io
 import os
 
 import pytest
 import rivian
-from testslide import StrictMock
+import testslide as ts
 
 from rivian_exporter import vehicle
 
@@ -43,7 +43,7 @@ def test_get_token_from_file_not_found(testslide):
         vehicle.get_token("foo")
 
 
-def test_get_token_from_file_not_found(testslide):
+def test_get_token_from_file(testslide):
     token = "foo"
     testslide.mock_callable(os, "getenv").for_call("foo").to_return_value(
         None
@@ -54,7 +54,7 @@ def test_get_token_from_file_not_found(testslide):
     testslide.mock_callable(os.path, "isfile").for_call("thefile").to_return_value(
         True
     ).and_assert_called_once()
-    file_mock = StrictMock(default_context_manager=True)
+    file_mock = ts.StrictMock(default_context_manager=True)
     file_mock.__enter__ = lambda: file_mock
     file_mock.__exit__ = lambda exc_type, exc_val, exc_tb: None
     testslide.mock_callable(file_mock, "readline").to_return_value("TheToken\n")
