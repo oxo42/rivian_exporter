@@ -6,6 +6,13 @@ from typing import Any
 import glog as log
 import prometheus_client as prom
 
+from rivian.exceptions import (
+    RivianApiException,
+    RivianApiRateLimitError,
+    RivianExpiredTokenError,
+    RivianUnauthenticated,
+)
+
 from . import vehicle
 from .rivian_collector import gauge, info
 
@@ -106,12 +113,22 @@ class RivianExporter:
             try:
                 state = await self.get_vehicle_state()
                 set_prom_metrics(state)
-                time.sleep(self.scrape_interval)
-            except Exception as e:
-                log.exception(str(e))
-                exception_backoff = 60
-                log.info(f"Sleeping {exception_backoff} seconds")
-                time.sleep(exception_backoff)
+                await asyncio.sleep(self.scrape_interval)
+            except RivianExpiredTokenError:
+                log.info("Rivian token expired, refreshing")
+                await self.rivian.create_csrf_token()
+            except RivianApiRateLimitError as err:
+                log.error("Rate limit being enforced: %s", err, exc_info=1)
+                log.info("Sleeping 900 seconds")
+                await asyncio.sleep(900)
+            except RivianUnauthenticated as err:
+                raise
+            except RivianApiException as ex:
+                log.error("Rivian api exception: %s", ex, exc_info=1)
+            except Exception as ex:  # pylint: disable=broad-except
+                log.error(
+                    "Unknown Exception while updating Rivian data: %s", ex, exc_info=1
+                )
 
 
 def run(port: int, scrape_interval: int, vin: str) -> None:
