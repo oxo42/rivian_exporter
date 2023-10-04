@@ -1,7 +1,7 @@
 name: Unit tests
 on: pull_request
 jobs:
-  tests:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -12,7 +12,7 @@ jobs:
       - name: Install poetry
         uses: abatilo/actions-poetry@v2
         with:
-          poetry-versin: "1.6.1"
+          poetry-version: "1.6.1"
       - name: Setup a local virtual environment (if no poetry.toml file)
         run: |
           poetry config virtualenvs.create true --local
@@ -26,3 +26,11 @@ jobs:
         run: poetry install
       - name: Run the automated tests
         run: poetry run pytest -v
+      - name: Coverage
+        run: |
+          poetry run coverage run -m pytest
+          poetry run coverage report -m
+      - name: Flake8
+        run: poetry run flake8 src tests
+      - name: Mypy
+        run: poetry run mypy .

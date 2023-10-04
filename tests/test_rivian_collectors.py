@@ -1,5 +1,5 @@
 import prometheus_client as prom
-from testslide import StrictMock
+import testslide as ts
 
 from rivian_exporter import rivian_collector
 
@@ -29,7 +29,7 @@ VEHICLE_STATE = {
 
 
 def test_gauge(testslide):
-    prom_mock = StrictMock(prom.Gauge)
+    prom_mock = ts.StrictMock(prom.Gauge)
     testslide.mock_constructor(prom, "Gauge").to_return_value(prom_mock)
     testslide.mock_callable(prom_mock, "set").to_return_value(
         None
@@ -53,7 +53,7 @@ def test_gauge_with_modifier(testslide):
     """
     The battery level is 52.6%.  Prometheus wants ratios to be from 0-1. Make this divide by 100
     """
-    prom_mock = StrictMock(prom.Gauge)
+    prom_mock = ts.StrictMock(prom.Gauge)
     testslide.mock_constructor(prom, "Gauge").to_return_value(prom_mock)
     testslide.mock_callable(prom_mock, "set").for_call(0.526).to_return_value(
         None
@@ -68,7 +68,7 @@ def test_gauge_with_modifier(testslide):
 
 
 def test_gauge_with_getter(testslide):
-    prom_mock = StrictMock(prom.Gauge)
+    prom_mock = ts.StrictMock(prom.Gauge)
     testslide.mock_constructor(prom, "Gauge").to_return_value(prom_mock)
     testslide.mock_callable(prom_mock, "set").for_call(17.8216).to_return_value(
         None
@@ -83,7 +83,7 @@ def test_gauge_with_getter(testslide):
 
 
 def test_info(testslide):
-    prom_mock = StrictMock(prom.Info)
+    prom_mock = ts.StrictMock(prom.Info)
     testslide.mock_constructor(prom, "Info").to_return_value(prom_mock)
     testslide.mock_callable(prom_mock, "info").for_call(
         {"batteryHvThermalEventPropagation": "nominal"}

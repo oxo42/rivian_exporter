@@ -1,10 +1,7 @@
 import asyncio
 import json
-import os
-from typing import Any
 
 import click
-import prometheus_client as prom
 import glog as log
 
 from . import exporter, vehicle

@@ -2,8 +2,6 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 REPO_DIR="$SCRIPT_DIR/.."
-VENV="$REPO_DIR/.venv/bin"
 
-source $VENV/activate
-cd "$REPO_DIR/src"
-python -m rivian_exporter $*
+cd "$REPO_DIR"
+poetry run python -m rivian_exporter $*
