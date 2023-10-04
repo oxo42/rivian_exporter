@@ -1,9 +1,9 @@
-name: ci
+name: Docker Publish
 
 on:
   push:
-    # branches:
-    #   - "main"
+    branches:
+      - "main"
 
 jobs:
   docker:
