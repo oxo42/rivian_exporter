@@ -36,8 +36,8 @@ def get_token(token: str) -> str:
     if env:
         return env
 
-    filename = os.environ[f"{token}_FILE"]
-    if not os.path.isfile(filename):
+    filename = os.getenv(f"{token}_FILE")
+    if filename is None or not os.path.isfile(filename):
         raise TokenUnavailableException(token)
 
     with open(filename) as f:
