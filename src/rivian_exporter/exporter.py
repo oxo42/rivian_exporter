@@ -103,28 +103,31 @@ class RivianExporter:
         body = await state.json()
         return body
 
-    async def run(self):
+    async def inner_loop(self) -> None:
+        try:
+            state = await self.get_vehicle_state()
+            set_prom_metrics(state)
+            await asyncio.sleep(self.scrape_interval)
+        except RivianExpiredTokenError:
+            log.info("Rivian token expired, refreshing")
+            await self.rivian.create_csrf_token()
+        except RivianApiRateLimitError as err:
+            log.error("Rate limit being enforced: %s", err, exc_info=1)
+            log.info("Sleeping 900 seconds")
+            await asyncio.sleep(900)
+        except RivianUnauthenticated:
+            raise
+        except RivianApiException as ex:
+            log.error("Rivian api exception: %s", ex, exc_info=1)
+        except Exception as ex:  # pylint: disable=broad-except
+            log.error(
+                "Unknown Exception while updating Rivian data: %s", ex, exc_info=1
+            )
+
+    async def run(self) -> None:
         await self.rivian.create_csrf_token()
         while True:
-            try:
-                state = await self.get_vehicle_state()
-                set_prom_metrics(state)
-                await asyncio.sleep(self.scrape_interval)
-            except RivianExpiredTokenError:
-                log.info("Rivian token expired, refreshing")
-                await self.rivian.create_csrf_token()
-            except RivianApiRateLimitError as err:
-                log.error("Rate limit being enforced: %s", err, exc_info=1)
-                log.info("Sleeping 900 seconds")
-                await asyncio.sleep(900)
-            except RivianUnauthenticated:
-                raise
-            except RivianApiException as ex:
-                log.error("Rivian api exception: %s", ex, exc_info=1)
-            except Exception as ex:  # pylint: disable=broad-except
-                log.error(
-                    "Unknown Exception while updating Rivian data: %s", ex, exc_info=1
-                )
+            await self.inner_loop()
 
 
 def run(port: int, scrape_interval: int, vin: str) -> None:
