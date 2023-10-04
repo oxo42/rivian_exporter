@@ -17,7 +17,7 @@ def cli() -> None:
 
 @cli.command(help="Start a Prometheus exporter for a specific VIN")
 @click.option("--port", default=8000)
-@click.option("--scrape-interval", default=60)
+@click.option("--scrape-interval", default=30)
 def prometheus(port: int, scrape_interval: int) -> None:
     vin = vehicle.get_token("VIN")
     exporter.run(port, scrape_interval, vin)
