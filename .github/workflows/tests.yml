@@ -26,3 +26,5 @@ jobs:
         run: poetry install
       - name: Run the automated tests
         run: poetry run pytest -v
+      - name: Run Coverage and report
+        run: poetry run coverage -m pytest && poetry run coverage -m
