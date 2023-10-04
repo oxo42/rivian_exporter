@@ -12,7 +12,7 @@ jobs:
       - name: Install poetry
         uses: abatilo/actions-poetry@v2
         with:
-          poetry-versin: "1.6.1"
+          poetry-version: "1.6.1"
       - name: Setup a local virtual environment (if no poetry.toml file)
         run: |
           poetry config virtualenvs.create true --local
@@ -26,5 +26,7 @@ jobs:
         run: poetry install
       - name: Run the automated tests
         run: poetry run pytest -v
-      - name: Run Coverage and report
-        run: poetry run coverage -m pytest && poetry run coverage -m
+      - name: Run Coverage
+        run: poetry run coverage -m pytest
+      - name: Report on coverage
+        run: poetry run coverage -m
