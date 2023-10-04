@@ -12,22 +12,22 @@ from rivian.exceptions import (
 )
 
 from . import vehicle
-from .rivian_collector import gauge
+from .rivian_collector import RivianCollector, gauge
 
-COLLECTORS = [
+COLLECTORS: list[RivianCollector] = [
     gauge("rivian_battery_capacity_kwh", "battery capacity in kwH", "batteryCapacity"),
     gauge(
         "rivian_battery_level_ratio",
         "current level of battery as a %",
         "batteryLevel",
         modifier=lambda v: v / 100,
-    ),
+    ),  # type: ignore
     gauge(
         "rivian_battery_limit_ratio",
         "Limit to which the battery will charge",
         "batteryLimit",
         modifier=lambda v: v / 100,
-    ),
+    ),  # type: ignore
     gauge("rivian_bearing_degrees", "Bearing of the vehicle", "gnssBearing"),
     gauge(
         "rivian_cabin_climate_driver_temperature_celsius",
@@ -44,7 +44,7 @@ COLLECTORS = [
         "range",
         "distanceToEmpty",
         modifier=lambda v: v * 1000,
-    ),
+    ),  # type: ignore
     gauge(
         "rivian_latitude_degrees",
         "Latitude",

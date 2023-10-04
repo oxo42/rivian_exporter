@@ -35,3 +35,10 @@ omit = [".*", "*/site-packages/*"]
 
 [tool.coverage.report]
 fail_under = 80
+
+[tool.mypy]
+warn_return_any = true
+
+[[tool.mypy.overrides]]
+module = "glog"
+ignore_missing_imports = true

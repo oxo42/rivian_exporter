@@ -1,4 +1,4 @@
-from typing import Any, Callable, Type, TypeVar
+from typing import Any, Callable, Generic, Type, TypeVar
 
 import glog as log
 import prometheus_client as prom
@@ -11,7 +11,7 @@ TCollectorMetric = TypeVar("TCollectorMetric")
 TRivianMetric = TypeVar("TRivianMetric")
 
 
-class RivianCollector:
+class RivianCollector(Generic[TCollector, TCollectorMetric, TRivianMetric]):
     """
     Creates a class that can extract metrics from the Rivian API and turn them
     into a prometheus metric
@@ -20,13 +20,13 @@ class RivianCollector:
     prometheus_label: str
     rivian_label: str
     metric_type: Type[TCollector]
-    metric_setter: Callable[[TCollector, TCollectorMetric], None]
+    metric_setter: Callable[[TCollector, TRivianMetric | TCollectorMetric], None]
     getter: Callable[[dict[str, Any]], TRivianMetric] = lambda v: v["value"]
     """
     This modifies the Rivian API value. e.g. Battery level is a percentage in
     Rivian but Prometheus wants a ratio from 0-1 so we need to divide it by 100
     """
-    modifier: Callable[[TRivianMetric], TCollectorMetric] = lambda x: x
+    modifier: Callable[[TRivianMetric], TRivianMetric | TCollectorMetric] = lambda x: x
 
     prom_metric: TCollector
 
@@ -36,7 +36,7 @@ class RivianCollector:
         prometheus_description: str,
         rivian_label: str,
         metric_type: Type[TCollector],
-        metric_setter: Callable[[TCollector, TCollectorMetric], None],
+        metric_setter: Callable[[TCollector, TRivianMetric | TCollectorMetric], None],
         getter: Callable[[dict[str, Any]], Any] = lambda v: v["value"],
         modifier: Callable[[Any], Any] = lambda x: x,
     ) -> None:
@@ -47,9 +47,11 @@ class RivianCollector:
         self.getter = getter
         self.modifier = modifier
 
-        self.prom_metric = metric_type(prometheus_label, prometheus_description)
+        self.prom_metric = metric_type(
+            prometheus_label, prometheus_description
+        )  # type: ignore
 
-    def value(self, vehicle_state: dict[str, Any]) -> TCollectorMetric:
+    def value(self, vehicle_state: dict[str, Any]) -> TRivianMetric | TCollectorMetric:
         datum = vehicle_state[self.rivian_label]
         value = self.getter(datum)
         collector_value = self.modifier(value)
@@ -67,7 +69,7 @@ def gauge(
     rivian_label: str,
     *,
     getter: Callable[[dict[str, Any]], TRivianMetric] = lambda v: v["value"],
-    modifier: Callable[[TRivianMetric], TCollectorMetric] = lambda x: x,
+    modifier: Callable[[TRivianMetric], TRivianMetric | TCollectorMetric] = lambda x: x,
 ) -> RivianCollector:
     return RivianCollector(
         prometheus_label,
@@ -86,7 +88,7 @@ def info(
     rivian_label: str,
     *,
     getter: Callable[[dict[str, Any]], TRivianMetric] = lambda v: v["value"],
-    modifier: Callable[[TRivianMetric], TCollectorMetric] = lambda x: x,
+    modifier: Callable[[TRivianMetric], TRivianMetric | TCollectorMetric] = lambda x: x,
 ) -> RivianCollector:
     return RivianCollector(
         prometheus_label,
