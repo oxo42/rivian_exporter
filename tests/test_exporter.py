@@ -2,7 +2,6 @@ import testslide as ts
 
 import rivian_exporter.exporter as exporter
 import rivian_exporter.vehicle as vehicle
-from rivian_exporter import exporter
 
 from . import utils
 from .pytest_testslide import testslide
