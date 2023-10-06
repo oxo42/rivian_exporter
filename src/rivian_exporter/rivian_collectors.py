@@ -1,12 +1,7 @@
-from typing import Any, Callable, Generic, Tuple, TypeVar, Tuple
+from typing import Any, Callable, Generic, Tuple, TypeVar
 
 import glog as log
 import prometheus_client as prom
-
-# The metric the prometheus collector takes
-TCollectorMetric = TypeVar("TCollectorMetric")
-# The metric we get out of the Rivian API
-TRivianMetric = TypeVar("TRivianMetric")
 
 
 class RivianInfo:
@@ -47,7 +42,7 @@ def info(
     return RivianInfo(prometheus_label, prometheus_description, data)
 
 
-class RivianGauge(Generic[TCollectorMetric, TRivianMetric]):
+class RivianGauge:
     """
     Creates a class that can extract metrics from the Rivian API and turn them
     into a prometheus metric
@@ -55,12 +50,12 @@ class RivianGauge(Generic[TCollectorMetric, TRivianMetric]):
 
     prometheus_label: str
     rivian_label: str
-    getter: Callable[[dict[str, Any]], TRivianMetric] = lambda v: v["value"]
+    getter: Callable[[dict[str, Any]], float] = lambda v: v["value"]
     """
     This modifies the Rivian API value. e.g. Battery level is a percentage in
     Rivian but Prometheus wants a ratio from 0-1 so we need to divide it by 100
     """
-    modifier: Callable[[TRivianMetric], TRivianMetric | TCollectorMetric] = lambda x: x
+    modifier: Callable[[float], float] = lambda x: x
     gauge: prom.Gauge
 
     def __init__(
@@ -77,7 +72,7 @@ class RivianGauge(Generic[TCollectorMetric, TRivianMetric]):
         self.modifier = modifier
         self.gauge = prom.Gauge(prometheus_label, prometheus_description)
 
-    def value(self, vehicle_state: dict[str, Any]) -> TRivianMetric | TCollectorMetric:
+    def value(self, vehicle_state: dict[str, Any]) -> float:
         datum = vehicle_state[self.rivian_label]
         value = self.getter(datum)
         return self.modifier(value)
@@ -93,8 +88,8 @@ def gauge(
     prometheus_description: str,
     rivian_label: str,
     *,
-    getter: Callable[[dict[str, Any]], TRivianMetric] = lambda v: v["value"],
-    modifier: Callable[[TRivianMetric], TRivianMetric | TCollectorMetric] = lambda x: x,
+    getter: Callable[[dict[str, Any]], float] = lambda v: v["value"],
+    modifier: Callable[[float], float] = lambda x: x,
 ) -> RivianGauge:
     return RivianGauge(
         prometheus_label,

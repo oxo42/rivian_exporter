@@ -12,7 +12,7 @@ from rivian.exceptions import (
 )
 
 from . import vehicle
-from .rivian_collectors import RivianGauge, gauge, info
+from .rivian_collectors import gauge, info
 
 GAUGES = [
     gauge("rivian_battery_capacity_kwh", "battery capacity in kwH", "batteryCapacity"),
