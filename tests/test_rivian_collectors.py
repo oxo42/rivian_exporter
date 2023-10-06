@@ -1,7 +1,7 @@
 import prometheus_client as prom
 import testslide as ts
 
-from rivian_exporter import rivian_collector
+from rivian_exporter import rivian_collectors
 
 from .pytest_testslide import testslide
 
@@ -34,7 +34,7 @@ def test_gauge(testslide):
     testslide.mock_callable(prom_mock, "set").to_return_value(
         None
     ).and_assert_called_once()
-    collector = rivian_collector.gauge(
+    collector = rivian_collectors.gauge(
         "rivian_battery_capacity_kwh",
         "Battery capacity",
         "batteryCapacity",
@@ -58,7 +58,7 @@ def test_gauge_with_modifier(testslide):
     testslide.mock_callable(prom_mock, "set").for_call(0.526).to_return_value(
         None
     ).and_assert_called_once()
-    collector = rivian_collector.gauge(
+    collector = rivian_collectors.gauge(
         "rivian_battery_level_ratio",
         "Percentage of battery remaining",
         "batteryLevel",
@@ -73,7 +73,7 @@ def test_gauge_with_getter(testslide):
     testslide.mock_callable(prom_mock, "set").for_call(17.8216).to_return_value(
         None
     ).and_assert_called_once()
-    collector = rivian_collector.gauge(
+    collector = rivian_collectors.gauge(
         "rivian_latitude_degrees",
         "Latitude of vehicle",
         "gnssLocation",
@@ -88,7 +88,7 @@ def test_info(testslide):
     testslide.mock_callable(prom_mock, "info").for_call(
         {"batteryHvThermalEventPropagation": "nominal"}
     ).to_return_value(None).and_assert_called_once()
-    collector = rivian_collector.info(
+    collector = rivian_collectors.info(
         "rivian_battery_hv_thermal_event_propagation",
         "damn that's long",
         "batteryHvThermalEventPropagation",
