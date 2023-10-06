@@ -1,4 +1,4 @@
-from typing import Any, Callable, Generic, Tuple, TypeVar
+from typing import Any, Callable, Tuple
 
 import glog as log
 import prometheus_client as prom
