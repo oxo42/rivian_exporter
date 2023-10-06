@@ -25,7 +25,22 @@ VEHICLE_STATE = {
         "longitude": 31.0492,
         "timeStamp": "2023-09-30T05:08:33.002Z",
     },
+    "otaCurrentVersionWeek": {"timeStamp": "2023-09-28T14:28:55.388Z", "value": 34},
+    "otaCurrentVersionNumber": {"timeStamp": "2023-09-28T14:28:55.388Z", "value": 0},
 }
+
+
+def test_info():
+    version_info = rivian_collectors.RivianInfo(
+        "test_info",
+        "description",
+        data={
+            "week": ("otaCurrentVersionWeek", "value"),
+            "number": ("otaCurrentVersionNumber", "value"),
+        },
+    )
+    expected = {"week": "34", "number": "0"}
+    assert version_info.values(VEHICLE_STATE) == expected
 
 
 def test_gauge(testslide):
@@ -78,19 +93,5 @@ def test_gauge_with_getter(testslide):
         "Latitude of vehicle",
         "gnssLocation",
         getter=lambda v: v["latitude"],
-    )
-    collector.process(VEHICLE_STATE)
-
-
-def test_info(testslide):
-    prom_mock = ts.StrictMock(prom.Info)
-    testslide.mock_constructor(prom, "Info").to_return_value(prom_mock)
-    testslide.mock_callable(prom_mock, "info").for_call(
-        {"batteryHvThermalEventPropagation": "nominal"}
-    ).to_return_value(None).and_assert_called_once()
-    collector = rivian_collectors.info(
-        "rivian_battery_hv_thermal_event_propagation",
-        "damn that's long",
-        "batteryHvThermalEventPropagation",
     )
     collector.process(VEHICLE_STATE)
