@@ -2,7 +2,6 @@ name: Publish GHCR
 on:
   release:
     types: [created]
-  
 
 env:
   REGISTRY: ghcr.io
@@ -10,30 +9,7 @@ env:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - name: Install poetry
-        uses: abatilo/actions-poetry@v2
-        with:
-          poetry-version: "1.6.1"
-      - name: Setup a local virtual environment (if no poetry.toml file)
-        run: |
-          poetry config virtualenvs.create true --local
-          poetry config virtualenvs.in-project true --local
-      - uses: actions/cache@v3
-        name: Define a cache for the virtual environment based on the dependencies lock file
-        with:
-          path: ./.venv
-          key: venv-${{ hashFiles('poetry.lock') }}
-      - name: Install the project dependencies
-        run: poetry install
-      - name: Run the automated tests
-        run: poetry run pytest -v
+    uses: ./.github/workflows/build_and_test.yml
 
   build-and-push-image:
     needs: build-and-test

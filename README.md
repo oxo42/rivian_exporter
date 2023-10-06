@@ -12,17 +12,18 @@ You can get [my dashboard from Grafana](https://grafana.com/grafana/dashboards/1
 
 ## How to run
 
-The image is published to [docker hub as joxley/rivian_exporter](https://hub.docker.com/r/joxley/rivian_exporter)
+The image is published to [`ghcr.io/oxo42/rivian_exporter:latest`](https://github.com/oxo42/rivian_exporter/pkgs/container/rivian_exporter)
+
 ### Build
 
 ```shell 
-docker build -t joxley/rivian_exporter .
+docker build -t ghcr.io/oxo42/rivian_exporter .
 ```
 
 ### Login and save credentials
 
 ```shell
-docker run -it joxley/rivian_exporter login
+docker run -it ghcr.io/oxo42/rivian_exporter login
 ```
 
 Save the last 3 lines to `/tmp/rivian-creds`
@@ -30,7 +31,7 @@ Save the last 3 lines to `/tmp/rivian-creds`
 ### Get user info
 
 ```shell
-docker run --env-file /tmp/rivian-creds -it joxley/rivian_exporter user-info 
+docker run --env-file /tmp/rivian-creds -it ghcr.io/oxo42/rivian_exporter user-info 
 # add `| jq` to prettify it
 ```
 
@@ -39,12 +40,12 @@ Then add `VIN=<YourVin>` to the credentials file
 #### Dump vehicle info
 This calls the same function the prometheus exporter calls
 ```shell
-docker run --env-file /tmp/rivian-creds -it joxley/rivian_exporter vehicle-state | jq
+docker run --env-file /tmp/rivian-creds -it ghcr.io/oxo42/rivian_exporter vehicle-state | jq
 ```
 
 ### Run the exporter for the final step, run the exporter
 ```shell
-docker run -p 8000 --env-file /tmp/rivian-creds joxley/rivian_exporter
+docker run -p 8000 --env-file /tmp/rivian-creds ghcr.io/oxo42/rivian_exporter
 curl http://localhost:8000
 ```
 
