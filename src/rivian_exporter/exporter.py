@@ -72,6 +72,40 @@ GAUGES = [
 
 INFOS = [
     info(
+        "rivian_charger",
+        "Charger Info",
+        {
+            "derate_status": ("chargerDerateStatus", "value"),
+            "state": ("chargerState", "value"),
+            "status": ("chargerStatus", "value"),
+        },
+    ),
+    info(
+        "rivian_closures",
+        "Closures",
+        {
+            "frunk_closed": ("closureFrunkClosed", "value"),
+            "frunk_locked": ("closureFrunkLocked", "value"),
+            "liftgate_closed": ("closureLiftgateClosed", "value"),
+            "liftgate_locked": ("closureLiftgateLocked", "value"),
+        },
+    ),
+    info(
+        "rivian_doors",
+        "Doors",
+        {
+            "front_left_closed": ("doorFrontLeftClosed", "value"),
+            "front_left_locked": ("doorFrontLeftLocked", "value"),
+            "front_right_closed": ("doorFrontRightClosed", "value"),
+            "front_right_locked": ("doorFrontRightLocked", "value"),
+            "rear_left_closed": ("doorRearLeftClosed", "value"),
+            "rear_left_locked": ("doorRearLeftLocked", "value"),
+            "rear_right_closed": ("doorRearRightClosed", "value"),
+            "rear_right_locked": ("doorRearRightLocked", "value"),
+        },
+    ),
+    info("rivian_drive_mode", "Drive Mode", {"drive_mode": ("driveMode", "value")}),
+    info(
         "rivian_ota_version",
         "OTA Version",
         {
@@ -79,7 +113,39 @@ INFOS = [
             "githash": ("otaCurrentVersionGitHash", "value"),
         },
     ),
-    info("rivian_drive_mode", "Drive Mode", {"drive_mode": ("driveMode", "value")}),
+    info(
+        "rivian_pet_mode",
+        "Pet Mode",
+        {
+            "status": ("petModeStatus", "value"),
+            "temperature_status": ("petModeTemperatureStatus", "value"),
+        },
+    ),
+    info(
+        "rivian_vehicle_state",
+        "Vehicle states",
+        {
+            "defrost_defog": ("defrostDefogStatus", "value"),
+            "gear": ("gearStatus", "value"),
+            "power": ("powerState", "value"),
+            "wiper_fluid": ("wiperFluidState", "value"),
+        },
+    ),
+    info(
+        "rivian_range_threshold",
+        "Range threshold",
+        {"state": ("rangeThreshold", "value")},
+    ),
+    info(
+        "rivian_tire_pressure",
+        "Tire Pressure",
+        {
+            "front_left": ("tirePressureStatusFrontLeft", "value"),
+            "front_right": ("tirePressureStatusFrontRight", "value"),
+            "rear_left": ("tirePressureStatusRearLeft", "value"),
+            "rear_right": ("tirePressureStatusRearRight", "value"),
+        },
+    ),
 ]
 
 
