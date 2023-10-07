@@ -12,9 +12,9 @@ from rivian.exceptions import (
 )
 
 from . import vehicle
-from .rivian_collector import RivianCollector, gauge
+from .rivian_collectors import gauge, info
 
-COLLECTORS: list[RivianCollector] = [
+GAUGES = [
     gauge("rivian_battery_capacity_kwh", "battery capacity in kwH", "batteryCapacity"),
     gauge(
         "rivian_battery_level_ratio",
@@ -69,9 +69,21 @@ COLLECTORS: list[RivianCollector] = [
         "vehicleMileage",
     ),
 ]
-RIVIAN_INFOS = {
-    "otaCurrentVersion": prom.Info("rivian_ota_current_version", "Current OTA Version"),
-}
+
+INFOS = [
+    info(
+        "rivian_ota_version",
+        "OTA Version",
+        {
+            "version": ("otaCurrentVersion", "value"),
+            "githash": ("otaCurrentVersionGitHash", "value"),
+        },
+    ),
+    info("rivian_drive_mode", "Drive Mode", {"drive_mode": ("driveMode", "value")}),
+]
+
+
+COLLECTORS = GAUGES + INFOS
 
 
 def set_prom_metrics(data: Any) -> None:
@@ -79,12 +91,7 @@ def set_prom_metrics(data: Any) -> None:
     for collector in COLLECTORS:
         collector.process(state)
 
-    for key, info in RIVIAN_INFOS.items():
-        value = state[key]["value"]
-        info.info({key: value})
-        log.debug(f"Info {key} to {value}")
-
-    count = len(COLLECTORS) + len(RIVIAN_INFOS)
+    count = len(COLLECTORS)
     log.info(f"Set {count} metrics")
 
 

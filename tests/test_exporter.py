@@ -8,7 +8,7 @@ from .pytest_testslide import testslide
 
 
 def test_collectors_exist():
-    assert len(exporter.COLLECTORS) > 0
+    assert len(exporter.GAUGES) > 0
 
 
 def test_rivian_exporter_get_vehicle_state(testslide):
