@@ -59,7 +59,7 @@ GAUGES = [
     ),
     gauge("rivian_speed_kph", "speed", "gnssSpeed"),
     gauge(
-        "rivian_time_to_end_of_charge_seconds",
+        "rivian_time_to_end_of_charge_minutes",
         "Time to end of charge",
         "timeToEndOfCharge",
     ),
