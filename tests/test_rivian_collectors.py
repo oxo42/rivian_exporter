@@ -95,3 +95,9 @@ def test_gauge_with_getter(testslide):
         getter=lambda v: v["latitude"],
     )
     collector.process(VEHICLE_STATE)
+
+
+def test_info_function_expands_data_dict():
+    i = rivian_collectors.info("name", "desc", {"key": "rivian_value"})
+    expected_data_dict = {"key": ("rivian_value", "value")}
+    assert i.data == expected_data_dict

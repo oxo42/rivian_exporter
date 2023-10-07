@@ -37,9 +37,15 @@ class RivianInfo:
 def info(
     prometheus_label: str,
     prometheus_description: str,
-    data: dict[str, Tuple[str, str]],
+    data: dict[str, str],
 ) -> RivianInfo:
-    return RivianInfo(prometheus_label, prometheus_description, data)
+    """
+    Short hand to create a RivianInfo object
+    the data dict in this function does not include the 'value' subkey
+    """
+    info_data = {key: (value, "value") for key, value in data.items()}
+
+    return RivianInfo(prometheus_label, prometheus_description, info_data)
 
 
 class RivianGauge:
