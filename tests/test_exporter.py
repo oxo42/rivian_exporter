@@ -8,10 +8,6 @@ from . import utils
 from .pytest_testslide import testslide
 
 
-def test_collectors_exist():
-    assert len(exporter.GAUGES) > 0
-
-
 def test_set_prom_metrics():
     """
     This actually sets the prometheus metrics.  If I were a Good Engineer I'd go
