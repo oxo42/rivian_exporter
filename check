@@ -1,0 +1,7 @@
+#!/bin/sh
+
+poetry run pytest
+poetry run coverage run -m pytest
+poetry run coverage report -m
+poetry run flake8
+poetry run mypy src tests
