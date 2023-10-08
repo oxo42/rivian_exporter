@@ -7,12 +7,15 @@ from . import utils
 from .pytest_testslide import testslide
 
 
-def test_collectors_exist():
-    assert len(exporter.GAUGES) > 0
-
-
-def test_rivian_exporter_get_vehicle_state(testslide):
-    pass
+def test_set_prom_metrics():
+    """
+    This actually sets the prometheus metrics.  If I were a Good Engineer™️ I'd go
+    verify that they were actually called correctly.  The main thing I want here
+    is to ensure I didn't fat-finger any of the keys so am calling it quits.
+    P.S. I love PRs
+    """
+    data = utils.vehicle_data()
+    exporter.set_prom_metrics(data)
 
 
 async def test_get_vehicle_state(testslide):

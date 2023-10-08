@@ -1,5 +1,14 @@
+import json
+from typing import Any
+
 import rivian
 from testslide import StrictMock
+
+
+def vehicle_data() -> Any:
+    with open("tests/data/vehicle.json") as f:
+        data = json.load(f)
+    return data
 
 
 def get_rivian_mock(testslide):
