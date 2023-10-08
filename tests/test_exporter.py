@@ -1,7 +1,6 @@
 import testslide as ts
 
 import rivian_exporter.exporter as exporter
-import rivian_exporter.rivian_collectors as rivian_collectors
 import rivian_exporter.vehicle as vehicle
 
 from . import utils

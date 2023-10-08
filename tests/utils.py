@@ -5,7 +5,7 @@ import rivian
 from testslide import StrictMock
 
 
-def vehicle_data() -> dict[str, Any]:
+def vehicle_data() -> Any:
     with open("tests/data/vehicle.json") as f:
         data = json.load(f)
     return data
